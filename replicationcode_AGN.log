@@ -1,0 +1,169 @@
+---------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\mbela\OneDrive\1. EPFL-UNIL\11. 2021A\Economics\Projet\alesina_giuliano_nunn_qje_2013_replication_materials
+> \Replication_Materials\replicationcode_AGN.log
+  log type:  text
+ opened on:  23 Nov 2021, 15:56:19
+
+. 
+. ***************
+. *** Table I ***
+. ***************
+. use "ethnoatlas_dataset.dta", clear
+
+. gen cutoff1=60  
+
+. gen cutoff2=60
+
+. gen constant=1
+
+. 
+. destring v104, gen(centroid_lat)
+v104: all characters numeric; centroid_lat generated as double
+
+. destring v106, gen(centroid_long)
+v106: all characters numeric; centroid_long generated as int
+
+. 
+. for @ in any centroid_lat centroid_long fem_part_agriculture plow large_animals economic_complexity political_hierarchies tropi
+> cal_climate agricultural_suitability: drop if missing(@)==1
+
+->  drop if missing(centroid_lat)==1
+(0 observations deleted)
+
+->  drop if missing(centroid_long)==1
+(0 observations deleted)
+
+->  drop if missing(fem_part_agriculture)==1
+(545 observations deleted)
+
+->  drop if missing(plow)==1
+(7 observations deleted)
+
+->  drop if missing(large_animals)==1
+(0 observations deleted)
+
+->  drop if missing(economic_complexity)==1
+(0 observations deleted)
+
+->  drop if missing(political_hierarchies)==1
+(15 observations deleted)
+
+->  drop if missing(tropical_climate)==1
+(38 observations deleted)
+
+->  drop if missing(agricultural_suitability)==1
+(0 observations deleted)
+
+. 
+. ****Regression with Conley Standard Errors****
+. x_ols centroid_lat centroid_long cutoff1 cutoff2 fem_part_agriculture constant plow large_animals economic_complexity political
+> _hierarchies tropical_climate agricultural_suitability, coord(2) xreg(7)
+
+
+     Results for Cross Sectional OLS corrected for Spatial Dependence
+
+                                   number of observations=  660
+ Dependent Variable= fem_part_agriculture
+
+variable    ols estimates   White s.e.   s.e. corrected for spatial dependence
+--------    -------------   ----------   -------------------------------------
+constant    4.0109629       .20122248    .37818855
+plow        -.88273046      .11170222    .22540464
+large_animals-.04784428     .10675441    .13169795
+economic_complexity-.03411522.02310523   .02967257
+political_hierarchies-.01893999.03997606 .08371177
+tropical_climate-.5629788   .15196147    .30225033
+agricultural_suitability-.02888869.10505947.25149336
+
+. su fem_part_agriculture if e(sample)
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+fem_part_a~e |        660    3.036364    1.018141          1          5
+
+. ****OLS regression to obtain adjusted R2 reported in Table 1, column 1****
+. reg fem_part_agriculture plow large_animals economic_complexity political_hierarchies tropical_climate agricultural_suitability
+> , r
+
+Linear regression                               Number of obs     =        660
+                                                F(6, 653)         =      16.90
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1350
+                                                Root MSE          =     .95128
+
+------------------------------------------------------------------------------------------
+                         |               Robust
+    fem_part_agriculture |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------------------+----------------------------------------------------------------
+                    plow |  -.8827305   .1137364    -7.76   0.000    -1.106064   -.6593973
+           large_animals |  -.0478443   .1109029    -0.43   0.666    -.2656135     .169925
+     economic_complexity |  -.0341152   .0277725    -1.23   0.220    -.0886495    .0204191
+   political_hierarchies |    -.01894    .041165    -0.46   0.646    -.0997717    .0618917
+        tropical_climate |  -.5629788   .1761407    -3.20   0.001    -.9088493   -.2171083
+agricultural_suitability |  -.0288887   .1063265    -0.27   0.786    -.2376718    .1798945
+                   _cons |   4.010963   .2227364    18.01   0.000     3.573597    4.448329
+------------------------------------------------------------------------------------------
+
+. fitstat
+
+Measures of Fit for regress of fem_part_agriculture
+
+Log-Lik Intercept Only:     -947.865     Log-Lik Full Model:         -900.014
+D(653):                     1800.027     LR(6):                        95.703
+                                         Prob > LR:                     0.000
+R2:                            0.135     Adjusted R2:                   0.127
+AIC:                           2.749     AIC*n:                      1814.027
+BIC:                       -2439.405     BIC':                        -56.749
+
+. 
+. use "sccs_dataset.dta", clear
+
+. 
+. xi: reg fem_part_agriculture plow large_animals economic_complexity  political_hierarchies tropical_climate agricultural_suitab
+> ility, r
+
+Linear regression                               Number of obs     =        124
+                                                F(6, 117)         =       6.67
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.2265
+                                                Root MSE          =     .98059
+
+------------------------------------------------------------------------------------------
+                         |               Robust
+    fem_part_agriculture |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------------------+----------------------------------------------------------------
+                    plow |  -1.136247   .2403449    -4.73   0.000    -1.612237   -.6602562
+           large_animals |   .1631326   .2473777     0.66   0.511     -.326786    .6530512
+     economic_complexity |  -.0742797   .0615907    -1.21   0.230    -.1962568    .0476975
+   political_hierarchies |  -.0200148   .0864912    -0.23   0.817    -.1913062    .1512765
+        tropical_climate |  -.3118259   .3507391    -0.89   0.376    -1.006446    .3827944
+agricultural_suitability |   .0761437   .2623107     0.29   0.772    -.4433488    .5956363
+                   _cons |    3.68483   .4438243     8.30   0.000     2.805859      4.5638
+------------------------------------------------------------------------------------------
+
+. su fem_part_agriculture if e(sample)
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+fem_part_a~e |        124    2.830645    1.087413          1          5
+
+. fitstat
+
+Measures of Fit for regress of fem_part_agriculture
+
+Log-Lik Intercept Only:     -185.838     Log-Lik Full Model:         -169.916
+D(117):                      339.831     LR(6):                        31.844
+                                         Prob > LR:                     0.000
+R2:                            0.226     Adjusted R2:                   0.187
+AIC:                           2.853     AIC*n:                       353.831
+BIC:                        -224.142     BIC':                         -2.923
+
+. outreg2 using TableI.xls, replace coefastr 3aster se
+option 3aster not allowed
+r(198);
+
+end of do-file
+
+r(198);
+
